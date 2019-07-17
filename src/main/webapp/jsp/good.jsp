@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Authorization page</title>
+    <title>User page</title>
 </head>
 <body>
 <h2>Hello <%=session.getAttribute("user-name")%>!</h2>

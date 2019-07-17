@@ -27,7 +27,7 @@ public class AuthController extends HttpServlet {
         else{
             User user = UserService.findUserByLoginAndPassword(login, password);
 
-            if (user != null){
+            if (user != null && user.getPassword().equals(password)){
                 RequestDispatcher dispatcher = req.getRequestDispatcher("/jsp/good.jsp");
                 HttpSession session = req.getSession();
                 session.setAttribute("user-name", String.format("%s %s", user.getFirstName(), user.getLastName()));
