@@ -50,11 +50,12 @@ public class UserDAO {
                 PreparedStatement preparedStatement = connection.prepareStatement(sql)
                 ){
 
-            preparedStatement.setString(1, user.getLogin());
+            preparedStatement.setString(1, login);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()){
+                user = new User();
                 setUserParams(user, resultSet);
                 return user;
             }
@@ -91,7 +92,7 @@ public class UserDAO {
     public static User findById(Integer id) {
         User user = null;
 
-        String sql = "SELECT * FROM users WHERE user_id=?";
+        String sql = "SELECT * FROM users WHERE id=?";
 
         try (
                 Connection connection = PSQLConnection.getConnection();
@@ -103,6 +104,7 @@ public class UserDAO {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()){
+                user = new User();
                 setUserParams(user, resultSet);
                 return user;
             }
@@ -113,8 +115,8 @@ public class UserDAO {
         return user;
     }
 
-    public static User update(User updatedUser) {
-        User user = null;
+    public static User update(User user) {
+        User updatedUser = null;
 
         String sql = "UPDATE users SET login=?, password=?, first_name=?, last_name=? WHERE id=?";
 
@@ -126,17 +128,18 @@ public class UserDAO {
             preparedStatement.setString(2, user.getPassword());
             preparedStatement.setString(3, user.getFirstName());
             preparedStatement.setString(4, user.getLastName());
-            preparedStatement.setInt(1, user.getId());
+            preparedStatement.setInt(5, user.getId());
 
             preparedStatement.executeUpdate();
 
-            user.clone(updatedUser);
+            updatedUser = new User();
+            updatedUser.clone(user);
 
         } catch (SQLException e){
             e.printStackTrace();
         }
 
-        return user;
+        return updatedUser;
     }
 
     public static void delete(Integer id) {
