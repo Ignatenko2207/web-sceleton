@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDAO {
 
@@ -14,10 +16,9 @@ public class UserDAO {
         String sql = "INSERT INTO users(login, password, first_name, last_name) " +
                 "VALUES(?,?,?,?)";
 
-        try {
+        try (Connection connection = PSQLConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)){
 
-            Connection connection = PSQLConnection.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, user.getLogin());
             preparedStatement.setString(2, user.getPassword());
             preparedStatement.setString(3, user.getFirstName());
@@ -39,7 +40,7 @@ public class UserDAO {
         return user;
     }
 
-    private static User findByLogin(String login) {
+    public static User findByLogin(String login) {
         User user = null;
 
         String sql = "SELECT * FROM users WHERE login=?";
@@ -54,11 +55,7 @@ public class UserDAO {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()){
-                user.setLogin(resultSet.getString("login"));
-                user.setPassword(resultSet.getString("password"));
-                user.setFirstName(resultSet.getString("first_name"));
-                user.setLastName(resultSet.getString("last_name"));
-
+                setUserParams(user, resultSet);
                 return user;
             }
         } catch (SQLException e){
@@ -68,7 +65,106 @@ public class UserDAO {
         return user;
     }
 
-    // SELECT * WHERE id=?
-    // UPDATE users SET login=?, password=?, first_name=?, last_name=? WHERE id=?
-    // DELETE FROM users WHERE id=?
+    public static List<User> findAll() {
+        List<User> users = new ArrayList<>();
+
+        String sql = "SELECT * FROM users";
+
+        try (
+                Connection connection = PSQLConnection.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql)
+        ){
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()){
+                User user = new User();
+                setUserParams(user, resultSet);
+                users.add(user);
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return users;
+    }
+
+    public static User findById(Integer id) {
+        User user = null;
+
+        String sql = "SELECT * FROM users WHERE user_id=?";
+
+        try (
+                Connection connection = PSQLConnection.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql)
+        ){
+
+            preparedStatement.setInt(1, id);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()){
+                setUserParams(user, resultSet);
+                return user;
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return user;
+    }
+
+    public static User update(User updatedUser) {
+        User user = null;
+
+        String sql = "UPDATE users SET login=?, password=?, first_name=?, last_name=? WHERE id=?";
+
+        try (
+                Connection connection = PSQLConnection.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql)
+        ){
+            preparedStatement.setString(1, user.getLogin());
+            preparedStatement.setString(2, user.getPassword());
+            preparedStatement.setString(3, user.getFirstName());
+            preparedStatement.setString(4, user.getLastName());
+            preparedStatement.setInt(1, user.getId());
+
+            preparedStatement.executeUpdate();
+
+            user.clone(updatedUser);
+
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return user;
+    }
+
+    public static void delete(Integer id) {
+
+        String sql = "DELETE FROM users WHERE id=?";
+
+        try (
+                Connection connection = PSQLConnection.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql)
+        ){
+
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    private static void setUserParams(User user, ResultSet resultSet) {
+        try {
+            user.setLogin(resultSet.getString("login"));
+            user.setPassword(resultSet.getString("password"));
+            user.setFirstName(resultSet.getString("first_name"));
+            user.setLastName(resultSet.getString("last_name"));
+            user.setId(resultSet.getInt("id"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

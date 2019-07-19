@@ -23,4 +23,12 @@ public class User {
         this.login = login;
         this.password = password;
     }
+
+    public void clone(User user){
+        this.id = user.getId();
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.login = user.getLogin();
+        this.password = user.getPassword();
+    }
 }
