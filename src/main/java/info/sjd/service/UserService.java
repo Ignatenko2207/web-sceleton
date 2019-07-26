@@ -19,4 +19,9 @@ public class UserService {
     public static User findUserByLoginAndPassword(String login, String password){
         return UserDAO.findByLoginAndPassword(login, password);
     }
+
+    public static void delete(Integer userId){
+        UserDAO.delete(userId);
+    }
+
 }

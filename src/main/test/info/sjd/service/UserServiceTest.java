@@ -5,12 +5,11 @@ import info.sjd.model.User;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
@@ -27,15 +26,15 @@ class UserServiceTest {
     @Test
     void createNewLoginUser(){
         User user = new User("Alex_new", "Ignatenko", "test_user_new", "test_pass");
-        UserDAO userDAOMock = Mockito.mock(UserDAO.class);
-        Mockito.when(userDAOMock.findByLogin("test_user_new")).thenReturn(null);
-        Mockito.when(userDAOMock.create(user)).thenReturn(user);
+        UserDAO userDAOMock = mock(UserDAO.class);
+        when(userDAOMock.findByLogin("test_user_new")).thenReturn(null);
+        when(userDAOMock.create(user)).thenReturn(user);
 
         User mockUser = UserService.create(user);
         assertNotNull(mockUser);
 
-        Mockito.verify(userDAOMock, Mockito.times(1)).findByLogin("test_user_new");
-        Mockito.verify(userDAOMock, Mockito.times(1)).create(user);
+        verify(userDAOMock, times(1)).findByLogin("test_user_new");
+        verify(userDAOMock, times(1)).create(user);
     }
 
 
@@ -49,6 +48,16 @@ class UserServiceTest {
         } else{
             fail("Collection users is empty!");
         }
+    }
+
+    @Test
+    void testDeleteUser(){
+        UserDAO userDAOMock = mock(UserDAO.class);
+        doNothing().when(userDAOMock).delete(anyInt());
+
+        UserService.delete(15);
+
+        verify(userDAOMock, times(1)).delete(anyInt());
     }
 
     @AfterAll
