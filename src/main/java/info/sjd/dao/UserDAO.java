@@ -66,6 +66,33 @@ public class UserDAO {
         return user;
     }
 
+    public static User findByLoginAndPassword(String login, String password) {
+        User user = null;
+
+        String sql = "SELECT * FROM users WHERE login=? AND password=?";
+
+        try (
+                Connection connection = PSQLConnection.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql)
+        ){
+
+            preparedStatement.setString(1, login);
+            preparedStatement.setString(2, password);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()){
+                user = new User();
+                setUserParams(user, resultSet);
+                return user;
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return user;
+    }
+
     public static List<User> findAll() {
         List<User> users = new ArrayList<>();
 

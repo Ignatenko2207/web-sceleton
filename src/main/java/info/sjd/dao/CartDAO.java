@@ -87,7 +87,7 @@ public class CartDAO {
         return result;
     }
 
-    private static Integer getSumByOpenAndUserId(Long from, Long to, Integer userId){
+    private static Integer getSumByOpenAndUserIdAndPeriod(Long from, Long to, Integer userId){
         Integer result = null;
         String sql = "";
 
