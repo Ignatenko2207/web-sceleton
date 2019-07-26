@@ -19,6 +19,7 @@
     <junit.version>5.4.2</junit.version>
     <lombok.version>1.18.8</lombok.version>
     <javax.version>2.5</javax.version>
+    <mockito.version>1.10.19</mockito.version>
   </properties>
 
   <dependencies>
@@ -44,6 +45,15 @@
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <!--MOCKITO-->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+
 
     <!--SERVLET-->
     <dependency>
