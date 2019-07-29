@@ -26,7 +26,7 @@ public class User {
 
     public void clone(User user){
         this.id = user.getId();
-        this.firstName = user.getFirstName();
+        this.firstName = user.firstName;
         this.lastName = user.getLastName();
         this.login = user.getLogin();
         this.password = user.getPassword();

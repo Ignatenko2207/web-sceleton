@@ -17,7 +17,7 @@ public class Item {
     private Integer price;
 
     public void clone(Item item){
-        this.id = item.getId();
+        this.id = item.id;
         this.itemCode = item.itemCode;
         this.name = item.name;
         this.price = item.price;

@@ -15,9 +15,13 @@ public class UserDAO {
 
         String sql = "INSERT INTO users(login, password, first_name, last_name) " +
                 "VALUES(?,?,?,?)";
+        String seqSql = "SELECT currval(pg_get_serial_sequence('users','id'))";
 
         try (Connection connection = PSQLConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+             PreparedStatement sequence = connection.prepareStatement(seqSql)){
+
+
 
             preparedStatement.setString(1, user.getLogin());
             preparedStatement.setString(2, user.getPassword());
@@ -25,14 +29,11 @@ public class UserDAO {
             preparedStatement.setString(4, user.getLastName());
 
             preparedStatement.executeUpdate();
-
-            User createdUser = findByLogin(user.getLogin());
-            if (createdUser != null){
-                user.setId(createdUser.getId());
-            } else{
-                return null;
+            ResultSet seqResult = sequence.executeQuery();
+            while (seqResult.next()){
+                Integer id = seqResult.getInt(1);
+                user.setId(id);
             }
-
         } catch (SQLException e){
             e.printStackTrace();
         }
