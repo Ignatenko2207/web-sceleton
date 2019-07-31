@@ -21,8 +21,6 @@ public class UserDAO {
              PreparedStatement preparedStatement = connection.prepareStatement(sql);
              PreparedStatement sequence = connection.prepareStatement(seqSql)){
 
-
-
             preparedStatement.setString(1, user.getLogin());
             preparedStatement.setString(2, user.getPassword());
             preparedStatement.setString(3, user.getFirstName());
